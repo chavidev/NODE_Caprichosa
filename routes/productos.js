@@ -4,7 +4,8 @@ const producto = require('../controllers/producto.controller');
 
 //router.get('/productos', producto.getAll);
 router.route('/producto')
-.post( producto.create); // llama a la funcion create, que esta en controllers/producto.controller
+.post( producto.create) // llama a la funcion create, que esta en controllers/producto.controller
+.get( producto.read);
 //.get( producto.gett)
 //router.route('/cliente/:id')
 

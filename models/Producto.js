@@ -17,7 +17,7 @@ const variacionSchema = new Schema({
 });
 
 const productoSchema = new Schema({
-    id_producto: { type: Number, required: false }, //¿FontFaceSetLoadEvent? qwue hacia el ejemplo aquí
+    id_producto: { type: Number, required: false, unique: true }, //¿FontFaceSetLoadEvent? qwue hacia el ejemplo aquí
     ref: { type: String },
     nombre: { type: String, required: false },
     precio_coste: { type: Number, required: false }, //sólo tiene qeu admitir dos decimales

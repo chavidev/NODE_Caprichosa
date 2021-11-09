@@ -29,7 +29,6 @@ const read = async (req, res) => {
     }
 }
 
-
 // update   con put desde postman y set desde mongoose
 const update = async (req, res) => {
     try {
@@ -47,7 +46,6 @@ const update = async (req, res) => {
     }
 }
 
-
 // delete
 const deleteProducto = async (req, res) => {
     try {
@@ -64,7 +62,6 @@ const deleteProducto = async (req, res) => {
 
 //limpieza  clean
 //Producto.remove()
-
 
 module.exports = {
     create,

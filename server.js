@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const productosRoute = require('./routes/productos.js');
+const productosRoute = require('./routes/routeProductos.js');
 
 const dotenv = require('dotenv');  // utilizo las variables de ambiente
 dotenv.config({ path: './config.env' });
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // routes api
-app.use('/api', productosRoute); 
+app.use('/api/producto', productosRoute); 
 
 app.listen(port, () => { console.log('server on port:', port) });
 

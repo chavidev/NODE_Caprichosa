@@ -8,7 +8,7 @@ const atributoSchema = new Schema({
 });
 
 const variacionSchema = new Schema({
-    id_padre: { type: Number, required: true },
+    id_padre: { type: Number, required: false },
     id_variacion: { type: Number },
     atributo_1: { type: String },
     atributo_2: { type: String },
@@ -17,17 +17,17 @@ const variacionSchema = new Schema({
 });
 
 const productoSchema = new Schema({
-    id_producto: { type: Number, required: true },
+    id_producto: { type: Number, required: false, unique: true }, //¿FontFaceSetLoadEvent? qwue hacia el ejemplo aquí
     ref: { type: String },
-    nombre: { type: String, required: true },
-    precio_coste: { type: Number, required: true },
-    P_V_P: { type: Number, required: true },
+    nombre: { type: String, required: false },
+    precio_coste: { type: Number, required: false }, //sólo tiene qeu admitir dos decimales
+    P_V_P: { type: Number, required: false},
     atributos: [atributoSchema],
     variaciones: [variacionSchema],
     categoria: { 
         type: [String],
         enum: ['CAMISA', 'PANTALON', 'CORREA'], 
-        required: true
+        required: false
     },
 });
 

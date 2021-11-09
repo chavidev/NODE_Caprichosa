@@ -60,9 +60,8 @@ const update = async (req, res) => {
 
 // delete  http://localhost:5001/api/producto/1022
 const deleteProducto = async (req, res) => {
-    try {
-        //const producto = req.body; // objeto que viene desde el front 
-        let eliminar = req.body
+    try { 
+        //let eliminar = req.body
         const params_id = req.params.id //en el caso de recibir el id/EAN por url
         //let producto = await Producto.findOne({"id_producto":eliminar.id_producto})  //en el caso de pasarselo por el body
         let producto = await Producto.findOne({"id_producto":params_id})
@@ -71,6 +70,24 @@ const deleteProducto = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error al eliminar el  producto...' }); 
+    }
+}
+
+// peligro!!!!  limpieza de toda la base de datos
+// Producto.remove()  http://localhost:5001/api/producto/removed/user/:user/pass/:pass 
+//http://localhost:5001/api/producto/removed/user/admin_1/pass/pass_1
+const removedAllProducto = async (req, res) => {
+    try {
+        const userName = req.params.user  
+        const password = req.params.pass
+        if(userName === "admin_1" && password === "pass_1"){
+            let removedAll = await Producto.remove()                                    //confirmar que el await es necesario y analizar la respuesta
+            res.status(200).json({removedAll , msg:"acabas de limpiar la Base de datos"});
+        } else {
+            res.status(200).json("Ups, algo falló");
+        }
+    } catch (err){
+        res.status(500).json({ message: 'Error  removedAllProducto()  Producto.remove() al eliminar todos los producto...' });
     }
 }
 
@@ -83,10 +100,11 @@ module.exports = {
     readOne,
     update,
     deleteProducto,
+    removedAllProducto,
 };
 
 
-//####  ojo no borrar, algún dia te va a hacer falta
+//####  ojo no borrar, algún dia me va a hacer falta
 // con ésta función se lo paso todo por el body
 /* 
 const update = async (req, res) => {

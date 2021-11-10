@@ -1,7 +1,35 @@
 const  Producto = require('../models/Producto') // modelo producto
 const ID_registro = require('../models/ID_registro')
 
+// lectura de todos los producto
+// GET http://localhost:5001/api/producto   body vacío
+const read = async (req, res) => {
+    try {
+        const todosProductos = await Producto.find()
+        res.status(200).json(todosProductos)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error al LEER producto...' });
+    }
+}
+
+// a partir de aquí paso el :id desde la url
+
+// leer un producto
+//GET http://localhost:5001/api/producto/1022  body vacío
+const readOne = async (req, res) => {
+    try {
+        const params_id = req.params.id
+        const productoEncontrado = await Producto.findOne({"id_producto": params_id}) //¿que ocurre si no le paso función?
+        res.status(200).json(productoEncontrado)
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Error en readOne producto...' }); //&& quiero poner el error que me viene, err.message
+    }
+}
+
 //creando un nuevo producto
+// POST http://localhost:5001/api/producto   body vacío
 const create = async (req, res) => {
     try {
         const producto = req.body; // objeto que viene desde el front 
@@ -18,33 +46,8 @@ const create = async (req, res) => {
     }
 }
 
-// lectura de todos los producto
-const read = async (req, res) => {
-    try {
-        const todosProductos = await Producto.find()
-        res.status(200).json(todosProductos)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al LEER producto...' });
-    }
-}
-
-// a partir de aquí paso el :id desde la url
-
-// leer un producto
-//http://localhost:5001/api/producto/1022 (metodo: GET) body vacío
-const readOne = async (req, res) => {
-    try {
-        const params_id = req.params.id
-        const productoEncontrado = await Producto.findOne({"id_producto": params_id}) //¿que ocurre si no le paso función?
-        res.status(200).json(productoEncontrado)
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: 'Error en readOne producto...' }); //&& quiero poner el error que me viene, err.message
-    }
-}
-
-// put  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} 
+// update
+// PUT  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} 
 const update = async (req, res) => {
     try { 
         let modificacion = req.body
@@ -73,15 +76,14 @@ const deleteProducto = async (req, res) => {
     }
 }
 
-// peligro!!!!  limpieza de toda la base de datos
-// Producto.remove()  http://localhost:5001/api/producto/removed/user/:user/pass/:pass 
-//http://localhost:5001/api/producto/removed/user/admin_1/pass/pass_1
+// Producto.remove()   ###  peligro!!!!  limpieza de toda la base de datos    
+// DELETE  http://localhost:5001/api/producto/removed/user/admin_1/pass/pass_1
 const removedAllProducto = async (req, res) => {
     try {
         const userName = req.params.user  
         const password = req.params.pass
         if(userName === "admin_1" && password === "pass_1"){
-            let removedAll = await Producto.remove()                                    //confirmar que el await es necesario y analizar la respuesta
+            let removedAll = await Producto.remove() 
             res.status(200).json({removedAll , msg:"acabas de limpiar la Base de datos"});
         } else {
             res.status(200).json("Ups, algo falló");
@@ -90,9 +92,6 @@ const removedAllProducto = async (req, res) => {
         res.status(500).json({ message: 'Error  removedAllProducto()  Producto.remove() al eliminar todos los producto...' });
     }
 }
-
-//limpieza  clean
-//Producto.remove()
 
 module.exports = {
     create,

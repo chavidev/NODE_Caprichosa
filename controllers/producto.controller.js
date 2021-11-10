@@ -13,7 +13,6 @@ const read = async (req, res) => {
     }
 }
 
-// a partir de aquí paso el :id desde la url
 
 // leer un producto
 //GET http://localhost:5001/api/producto/1022  body vacío
@@ -24,12 +23,12 @@ const readOne = async (req, res) => {
         res.status(200).json(productoEncontrado)
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: 'Error en readOne producto...' }); //&& quiero poner el error que me viene, err.message
+        res.status(500).json({ message: 'Error en readOne producto...', error: err }); //&& quiero poner el error que me viene, err.message
     }
 }
 
 //creando un nuevo producto
-// POST http://localhost:5001/api/producto   body vacío
+// POST http://localhost:5001/api/producto   body con todo
 const create = async (req, res) => {
     try {
         const producto = req.body; // objeto que viene desde el front 
@@ -47,7 +46,7 @@ const create = async (req, res) => {
 }
 
 // update
-// PUT  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} 
+// PUT  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} Sólo lo qeu hay qeu actualizar
 const update = async (req, res) => {
     try { 
         let modificacion = req.body
@@ -63,8 +62,7 @@ const update = async (req, res) => {
 
 // delete  http://localhost:5001/api/producto/1022
 const deleteProducto = async (req, res) => {
-    try { 
-        //let eliminar = req.body
+    try {
         const params_id = req.params.id //en el caso de recibir el id/EAN por url
         //let producto = await Producto.findOne({"id_producto":eliminar.id_producto})  //en el caso de pasarselo por el body
         let producto = await Producto.findOne({"id_producto":params_id})

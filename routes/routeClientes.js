@@ -1,20 +1,18 @@
 const express = require('express');
 const router = express.Router();
-//const producto = require('../controllers/producto.controller');
+const cliente = require('../controllers/cliente.controller');
 
-//zona de peligro limpieza de todos los productos
-router.delete('/removed/user/:user/pass/:pass', producto.removedAllProducto);
+//zona de peligro limpieza de todos los clientes
+router.delete('/removed/user/:user/pass/:pass', cliente.removedAllCliente);
 
-//router.get('/productos', producto.getAll);
+
 router.route('/')
-.post( producto.create) // llama a la funcion create, que esta en controllers/producto.controller
-.get( producto.read)
+.post(cliente.create)
+.get(cliente.read)
 
 router.route('/:id')
-.get(producto.readOne)  //&&crear y actualizar
-.put( producto.update)
-.delete(producto.deleteProducto)
-
-//router.get('/producto', producto.gett); //otro sistema, pero éste es mas limpio
+.get(cliente.readOne)
+.put(cliente.update)
+.delete(cliente.deleteCliente)
 
 module.exports = router; //&&  ¿no tendría qeu ser routerProducto?  ¿dónde lo importo?

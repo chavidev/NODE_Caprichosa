@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const validateEmail = (email) => {
-    const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4,5,6,7})+$/;
+    const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return re.test(email)
 };
 
@@ -11,12 +11,12 @@ const clienteSchema = new Schema({
     id_cliente: { type: Number, required: false, unique: true }, 
     nombre: { type: String, required: false },
     email: { 
-        type: Number, 
+        type: String, 
         required: false, 
         validate: [validateEmail, 'por favor introduzca un email válido'],
         // match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4,5})+$/, 'Please fill a valid email address'], //otro sistema alternativo a validate
         unique: true 
-    }, //&& pendiente de introducir la validación
+    }, 
     telefono: { 
         type: Number, 
         required: true,

@@ -1,4 +1,4 @@
-let ejemplo = {
+let producto = {
   "_id": "61892c3c45d4879aac313d72",
   "id_producto": 1023,
   "ref": "ref 7",
@@ -33,3 +33,11 @@ let ejemplo = {
   ],
   "__v": 0
 }
+
+let cliente = { 
+    "nombre": "nombre nuevo cliente",
+    "email": "email@gmail.comes", 
+    "telefono": 123456789,
+    "pass": "pass_cliente" 
+}
+

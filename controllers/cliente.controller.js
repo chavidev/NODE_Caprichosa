@@ -32,20 +32,22 @@ const readOne = async (req, res) => {
 // POST http://localhost:5001/api/cliente   body con todo
 const create = async (req, res) => {
   try {
-
-    //refactorizar id_variación   y si no hay datos en la base de datos, que salte un error
-    //validar que no exista en clientes ni en productos
       const cliente = req.body;
-      let id_registro = await ID_registro.findOne() 
-      if(!id_registro)  id_registro = await ID_registro.create({ id_variacion: 1000});  //renombrarlo por ¿id_unico?
-      cliente.id_cliente = id_registro.id_variacion  //&& renombrar id_variación por id_unico
-      id_registro.id_variacion += 1
+      let id_registro = await ID_registro.findOne()
+      //&& no consigo ponerlo a funcionar la primera vez ¿en que fallo? 
+      //if(!id_registro.id_cliente)  id_registro.id_cliente = await ID_registro.create({ id_cliente: 10});  
+      cliente.id_cliente = id_registro.id_cliente  
+      id_registro.id_cliente += 1
       id_registro.save()
       const clienteCreado = await Cliente.create(cliente); // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
       res.status(200).json({ message: 'success', cliente:clienteCreado  }); // se le envia al front el producto creado y un menasaje de exitoso
-  } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: 'Error al crear el cliente' }); 
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ 
+          message: 'Error al crear el cliente  POST create',
+          'mensaje del error': err.message,
+          "error completo por si falla":err 
+      }); 
   }
 }
 

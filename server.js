@@ -8,7 +8,6 @@ const dotenv = require('dotenv');  // utilizo las variables de ambiente
 dotenv.config({ path: './config.env' });
 
 const app = express();
-
 const port = process.env.PORT || 8080;   // si no hay puerto asignado, va al 8080
 
 // conexion a la base de datos 

@@ -26,7 +26,7 @@ const productoSchema = new Schema({
     variaciones: [variacionSchema],
     categoria: { 
         type: [String],
-        enum: ['CAMISA', 'PANTALON', 'CORREA'], 
+        enum: ['CAMISA', 'PANTALON', 'CINTURON'], 
         required: false
     },
 });

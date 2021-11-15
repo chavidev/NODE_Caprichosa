@@ -1,5 +1,7 @@
 const  Producto = require('../models/Producto') //import Producto from '../models/Producto'
 const ID_registro = require('../models/ID_registro')
+/* const { crear_variaciones } = require('../functions/functions') */
+const { crear_variaciones } = require('../functions/functions')
 
 // lectura de todos los producto
 // GET http://localhost:5001/api/producto   body vacío
@@ -39,6 +41,11 @@ const create = async (req, res) => {
         producto.id_producto = id_registro.id_variacion
         id_registro.id_variacion += 1
         id_registro.save()
+
+        //producto.id_variacion = crear_variaciones(producto.atributos[0],producto.atributos[1])
+        //producto.variaciones = "12345"
+        console.log(crear_variaciones)
+        producto.variaciones = await crear_variaciones(producto.atributos, id_registro.id_variacion)
         const productoCreado = await Producto.create(producto); // se crea el producto, mediante el metodo Producto.create()
         res.status(200).json({ message: 'success', producto:productoCreado  }); // se le envia al front el producto creado y un menasaje de exitoso
     } catch (error) {

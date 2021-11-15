@@ -1,4 +1,4 @@
-const  Producto = require('../models/Producto') // modelo producto
+const  Producto = require('../models/Producto') //import Producto from '../models/Producto'
 const ID_registro = require('../models/ID_registro')
 
 // lectura de todos los producto
@@ -19,7 +19,9 @@ const read = async (req, res) => {
 const readOne = async (req, res) => {
     try {
         const params_id = req.params.id
+        
         const productoEncontrado = await Producto.findOne({"id_producto": params_id}) //¿que ocurre si no le paso función?
+        // const productoEncontrado = await Producto.find({"price":{$and:[{$gt:500},{$lt:1000}]}}) 
         res.status(200).json(productoEncontrado)
     } catch (err) {
         console.log(err);
@@ -41,7 +43,7 @@ const create = async (req, res) => {
         res.status(200).json({ message: 'success', producto:productoCreado  }); // se le envia al front el producto creado y un menasaje de exitoso
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: 'Error al crear producto...' }); 
+        res.status(500).json({ message: 'Error al crear producto...', producto }); 
     }
 }
 
@@ -56,7 +58,7 @@ const update = async (req, res) => {
         res.status(200).json(response); 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: 'Error al crear producto...' }); 
+        res.status(500).json({ message: 'Error al actualizar un producto...', modificacion }); 
     }
 }
 

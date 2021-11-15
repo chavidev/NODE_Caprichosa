@@ -8,11 +8,11 @@ const validateEmail = (email) => {
 
 const clienteSchema = new Schema({
     //ha de ser único en producto y clientes    (carrito tendrá números independientes)
-    id_cliente: { type: Number, required: false, unique: true }, 
-    nombre: { type: String, required: false },
+    id_cliente: { type: Number, required: true, unique: true }, //&& CONSIGUE QUE no se puedA actualizar
+    nombre: { type: String, required: true },
     email: { 
         type: String, 
-        required: false, 
+        required: true, 
         validate: [validateEmail, 'por favor introduzca un email válido'],
         // match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4,5})+$/, 'Please fill a valid email address'], //otro sistema alternativo a validate
         unique: true 

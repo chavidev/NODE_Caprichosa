@@ -34,13 +34,20 @@ const create = async (req, res) => {
   try {
       const cliente = req.body;
       let id_registro = await ID_registro.findOne()
-      //&& no consigo ponerlo a funcionar la primera vez ¿en que fallo? 
-      //if(!id_registro.id_cliente)  id_registro.id_cliente = await ID_registro.create({ id_cliente: 10});  
+
+      //&& en producción, si no coge el id => que lance un error "Ups, no cogí la info de la base de datos" 
+      let response = ""
+      if(!id_registro.id_cliente)  {  //supongo que id_registro existe
+        response = await ID_registro.findByIdAndUpdate(id_registro._id,{id_cliente:20},{new:true})
+        id_registro.id_cliente = 20
+      }
+      //fin verificación inicial
+    
       cliente.id_cliente = id_registro.id_cliente  
       id_registro.id_cliente += 1
       id_registro.save()
       const clienteCreado = await Cliente.create(cliente); // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
-      res.status(200).json({ message: 'success', cliente:clienteCreado  }); // se le envia al front el producto creado y un menasaje de exitoso
+      res.status(200).json({ message: 'success', cliente:clienteCreado, response  }); // se le envia al front el producto creado y un menasaje de exitoso
   } catch (err) {
       console.log(err);
       res.status(500).json({ 
@@ -57,12 +64,12 @@ const update = async (req, res) => {
   try { 
       let modificacion = req.body
       const params_id = req.params.id
-      let producto = await Producto.findOne({"id_producto":params_id})
-      let response =  await Producto.findByIdAndUpdate(producto._id,modificacion, {new: true})
+      let cliente = await Cliente.findOne({"id_cliente":params_id})
+      let response =  await Cliente.findByIdAndUpdate(cliente._id,modificacion, {new: true})
       res.status(200).json(response); 
   } catch (error) {
       console.log(error);
-      res.status(500).json({ message: 'Error al crear producto...' }); 
+      res.status(500).json({ message: 'Error al actualizar un cliente...' }); 
   }
 }
 
@@ -73,7 +80,8 @@ const deleteCliente = async (req, res) => {
       //let cliente = await Cliente.findOne({"id_cliente":eliminar.id_cliente})  //en el caso de pasarselo por el body
       let cliente = await Cliente.findOne({"id_cliente":params_id})
       let response =  await Cliente.findByIdAndDelete(cliente._id)         
-      res.status(200).json(response); 
+      //res.status(200).json(`has eliminado el cliente 24  ${response}`);   // funcionaría !sip y es mejor!
+      res.status(200).json({mensaje:"se ha eliminado correctamente el id= "+ params_id,response});  
   } catch (error) {
       console.log(error);
       res.status(500).json({ message: 'Error en deleteCliente...' }); 

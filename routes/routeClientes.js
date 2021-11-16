@@ -6,7 +6,7 @@ const { checkToken } = require('../middlewaree/autenticarCliente.js')
 //zona de peligro limpieza de todos los clientes
 router.delete('/removed/user/:user/pass/:pass', cliente.removedAllCliente);
 
-router.get('/:id', checkToken, cliente.readOne)
+//router.get('/:id', checkToken, cliente.readOne)
 
 router.route('/')
 .post(cliente.create)
@@ -14,6 +14,7 @@ router.route('/')
 
 router.route('/:id')
 //.get(cliente.readOne)
+.get(checkToken , cliente.readOne)
 .put(cliente.update)
 .delete(cliente.deleteCliente)
 

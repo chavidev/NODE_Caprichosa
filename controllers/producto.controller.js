@@ -1,7 +1,6 @@
 const  Producto = require('../models/Producto') //import Producto from '../models/Producto'
 const ID_registro = require('../models/ID_registro')
-/* const { crear_variaciones } = require('../functions/functions') */
-const { crear_variaciones } = require('../functions/functions')
+const { crear_variaciones } = require('../utils/utils')
 
 // lectura de todos los producto
 // GET http://localhost:5001/api/producto   body vacío

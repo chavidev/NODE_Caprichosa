@@ -9,12 +9,12 @@ router.delete('/removed/user/:user/pass/:pass', cliente.removedAllCliente);
 //router.get('/:id', checkToken, cliente.readOne)  //sistema estandard del token
 
 //router.route(checkAdmin , '/admin')   // como admin no tengo limitaciones   
-router.route('/admin')  
+router.route('/admin')  // pendiente middeware
 .post(cliente.create)
 .get(cliente.read)  
 
-router.route('admin/:id')
-.get(cliente.readOne)
+router.route('/admin/:id')//pendiente middleware
+.get(cliente.readOne)  // ojo, lo busco por id_cliente no por el de mongo  ¡¡ RIESGO DE FALLO !! nadie lo hace así
 .put(cliente.update)
 .delete(cliente.deleteCliente) 
 
@@ -23,8 +23,8 @@ router.route('/')
 .get(cliente.read)
 
 router.route('/:id')
-//.get(cliente.readOne)  
-.get(checkToken , cliente.readOne)  //con token cliente
+//.get(cliente.readOne)   //con token cliente
+.get(checkToken , cliente.readOne_id) // con id de mongo
 .put(cliente.update)
 .delete(cliente.deleteCliente)
 

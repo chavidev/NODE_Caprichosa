@@ -15,9 +15,23 @@ const read = async (req, res) => {
 }
 
 
+// ver un cliente SÓLO EL Admin
+//GET http://localhost:5001/api/cliente/admin/1022  body vacío
+const readOne = async (req, res) => {
+  try {
+      const params_id = req.params.id
+  // ojo, lo busco por id_cliente no por el de mongo  ¡¡ RIESGO DE FALLO !!  pero es lo qeu me llegará de woocommerce 
+        const clienteEncontrado = await Cliente.findOne({"id_cliente": params_id })   //se puede unificar en una sola función =>"id_cliente"/"_id" 
+        res.status(200).json(clienteEncontrado)
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Error en readOne clienteEncontrado' }); 
+  }
+}
+
 // ver un cliente
 //GET http://localhost:5001/api/cliente/1022  body vacío
-const readOne = async (req, res) => {
+const readOne_id = async (req, res) => {
   try {
       const params_id = req.params.id
       const id_cliente_autenticado = req.user.id
@@ -115,6 +129,7 @@ module.exports = {
     create,
     read,
     readOne,
+    readOne_id,
     update,
     deleteCliente,
     removedAllCliente,

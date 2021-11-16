@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const { env: { JWT_SECRET } } = process;
 
 let checkToken = async (req, res, next) => {
     try {
@@ -16,8 +15,9 @@ let checkToken = async (req, res, next) => {
                 message: "Token not provided"
             });
         }
-
-        const decoded = await jwt.verify(token, JWT_SECRET);
+        console.log('token: ',token)
+        console.log('secret_key: ',process.env.JWT_SECRET)
+        const decoded = await jwt.verify(token,"HOLA");
 
         console.log(decoded);
 

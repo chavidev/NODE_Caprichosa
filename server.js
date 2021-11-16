@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const productosRoute = require('./routes/routeProductos.js');
 const clientesRoute = require('./routes/routeClientes.js');
+const loginClienteRoute = require('./routes/routeLoginCliente.js');
 //&&clientesroute
 
 const dotenv = require('dotenv');  // utilizo las variables de ambiente
@@ -23,6 +24,7 @@ app.use(express.json());
 // routes api
 app.use('/api/producto', productosRoute); 
 app.use('/api/cliente', clientesRoute); 
+app.use('/api/loginCliente', loginClienteRoute);
 
 app.listen(port, () => { console.log('server on port:', port) });
 

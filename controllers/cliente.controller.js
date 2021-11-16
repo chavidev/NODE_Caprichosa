@@ -20,8 +20,13 @@ const read = async (req, res) => {
 const readOne = async (req, res) => {
   try {
       const params_id = req.params.id
-      const clienteEncontrado = await Cliente.findOne({"id_cliente": params_id}) 
-      res.status(200).json(clienteEncontrado)
+      const id_cliente_autenticado = req.user.id
+      if(params_id === id_cliente_autenticado) {
+        const clienteEncontrado = await Cliente.findOne({"_id": params_id }) 
+        res.status(200).json(clienteEncontrado)
+      } else {
+        res.status(401).json({ message: 'Acceso denegado' });
+      }
   } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Error en readOne clienteEncontrado' }); 

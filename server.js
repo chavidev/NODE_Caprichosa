@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const productosRoute = require('./routes/routeProductos.js');
+const carritoRoute = require('./routes/routeCarrito.js');
 const clientesRoute = require('./routes/routeClientes.js');
 const loginClienteRoute = require('./routes/routeLoginCliente.js');
 //&&clientesroute
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));  //&&¿qué hago aquí?
 app.use(express.json());
 
 // routes api
+app.use('/api/carrito', carritoRoute);
 app.use('/api/producto', productosRoute); 
 app.use('/api/cliente', clientesRoute); 
 app.use('/api/loginCliente', loginClienteRoute);

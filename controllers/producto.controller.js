@@ -38,13 +38,13 @@ const create = async (req, res) => {
         const producto = req.body; // objeto que viene desde el front 
         let id_registro = await ID_registro.findOne() 
         if(!id_registro)  id_registro = await ID_registro.create({ id_variacion: 1000});
-        producto.id_producto = id_registro.id_variacion
         id_registro.id_variacion += 1
-        id_registro.save()
+        producto.id_producto = id_registro.id_variacion        
+        await id_registro.save()  // solución para evitar qeu el primer hijo tenga el mismo id qpe el padre
 
         //producto.id_variacion = crear_variaciones(producto.atributos[0],producto.atributos[1])
         //producto.variaciones = "12345"
-        console.log(crear_variaciones)
+        //console.log(crear_variaciones)
         producto.variaciones = await crear_variaciones(producto.atributos, id_registro.id_variacion)
         const productoCreado = await Producto.create(producto); // se crea el producto, mediante el metodo Producto.create()
         res.status(200).json({ message: 'success', producto:productoCreado  }); // se le envia al front el producto creado y un menasaje de exitoso

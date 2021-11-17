@@ -25,7 +25,7 @@ const carritoSchema = new Schema(
     },
     variaciones: {
       //&&ha de enlazar con la variación del producto
-      type: [Number],
+      type: [Number], //{ type: Schema.Types.ObjectId, ref: 'producto' }
       required: true
     },
     historial: [historialSchema]

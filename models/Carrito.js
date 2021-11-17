@@ -17,13 +17,15 @@ const carritoSchema = new Schema(
   {
     id_carrito: { type: Number, required: true, unique: true }, //&& CONSIGUE QUE no se puedA actualizar
     id_cliente: { type: Schema.Types.ObjectId, ref: 'cliente' }, // id de mongo
+    id_producto: { type: Schema.Types.ObjectId, ref: 'producto' }, // id de mongo
     state: {
       type: String,
       enum: ['OPEN', 'CLOSED'],
       required: true
-    }, //valores asignados igual qeu a la familia
+    },
     variaciones: {
-      type: [Number], //array de numbers
+      //&&ha de enlazar con la variación del producto
+      type: [Number],
       required: true
     },
     historial: [historialSchema]

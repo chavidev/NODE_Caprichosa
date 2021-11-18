@@ -23,7 +23,7 @@ const create = async (req, res) => {
 // GET http://localhost:5001/carritos   body vacío
 const read = async (req, res) => {
   try {
-    const todosCarrito = await Carrito.find().populate('id_cliente').populate('id_producto')
+    const todosCarrito = await Carrito.find().populate('id_cliente') //.populate('id_producto')
     res.status(200).json(todosCarrito)
   } catch (error) {
     console.log(error)
@@ -36,9 +36,12 @@ const read = async (req, res) => {
 const readOne = async (req, res) => {
   try {
     const { id_carrito, id_mongo } = req.body
+    console.log(`________id_carrito:${id_carrito}`)
     let filter = {}
     if (id_carrito) {
       filter = { id_carrito }
+
+      console.log(`____filter: ${filter.id_carrito}`)
     } else {
       if (id_mongo) {
         filter = { _id: id_mongo }
@@ -46,9 +49,8 @@ const readOne = async (req, res) => {
         throw new Error('Ups, Sin Id')
       }
     }
-    const carritoEncontrado = await Carrito.findOne(filter)
-      .populate('id_cliente')
-      .populate('id_producto')
+    const carritoEncontrado = await Carrito.findOne(filter).populate('id_cliente')
+    //.populate('id_producto')
     res.status(200).json(carritoEncontrado)
   } catch (err) {
     console.log(err)

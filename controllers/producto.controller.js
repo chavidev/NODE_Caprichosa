@@ -14,22 +14,6 @@ const read = async (req, res) => {
   }
 }
 
-const filtro = async (req, res) => {
-  try {
-    const { categoria, talla, color } = req.query
-    console.log(req.query)
-    const todosProductos = await Producto.find({
-      categoria,
-      'atributos.valores.valor': color,
-      'atributos.valores.valor': talla
-    })
-    res.status(200).json(todosProductos)
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: 'Error al LEER producto...' })
-  }
-}
-
 // leer un producto
 //GET http://localhost:5001/api/producto/1022  body vacío
 const readOne = async (req, res) => {
@@ -118,6 +102,40 @@ const removedAllProducto = async (req, res) => {
     })
   }
 }
+
+//&& or and y not   (un mismo atributo color and talla)
+const filtro = async (req, res) => {
+  try {
+    const { categoria, talla, color } = req.query
+    console.log(req.query)
+    const todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'variaciones.atributo_2': talla
+    })
+    res.status(200).json(todosProductos) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+}
+
+/*    TENGO QEU CONSEGUIR QUE FUNCIONE CON DOS PARÁMETROS 
+const filtro__fallo = async (req, res) => {
+  try {
+    const { categoria, talla, color } = req.query
+    console.log(req.query)
+    const todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'atributos.valores.valor': talla //genera error aquí
+    })
+    res.status(200).json(todosProductos) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+} */
 
 module.exports = {
   create,

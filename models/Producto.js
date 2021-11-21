@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const atributoSchema = new Schema({
   nombre: { type: String },
   valores: { type: Array },
-  default: { type: String, default: 1 }
+  default: { type: String, default: 0 }
 })
 
 const variacionSchema = new Schema({
@@ -13,7 +13,7 @@ const variacionSchema = new Schema({
   atributo_1: { type: String },
   atributo_2: { type: String }, //quitar el error es un array de atributos
   stock: { type: Number },
-  etiquetas: { type: Number }
+  etiquetas: { type: Number } //pegatinas
 })
 
 const productoSchema = new Schema({

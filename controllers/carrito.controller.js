@@ -3,6 +3,24 @@ const ID_registro = require('../models/ID_registro')
 
 //creando un nuevo carrito
 // POST http://localhost:5001/carrito   body con todo
+const addCarrito = async (req, res) => {
+  try {
+    const carrito = req.body // objeto que viene desde el front
+    let id_registro = await ID_registro.findOne()
+    id_registro.id_carrito += 1
+    console.log(id_registro.id_carrito)
+    carrito.id_carrito = id_registro.id_carrito
+    await id_registro.save()
+    const carritoCreado = await Carrito.create(carrito) // se crea el carrito, mediante el metodo carrito.create()
+    res.status(200).json({ message: 'success', carrito: carritoCreado }) // se le envia al front el carrito creado y un menasaje de exitoso
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al crear carrito...', carrito })
+  }
+}
+
+//creando un nuevo carrito
+// POST http://localhost:5001/carrito   body con todo
 const create = async (req, res) => {
   try {
     const carrito = req.body // objeto que viene desde el front
@@ -138,6 +156,7 @@ const removedAllCarrito = async (req, res) => {
 }
 
 module.exports = {
+  addCarrito,
   create,
   read,
   readOne,

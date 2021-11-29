@@ -36,10 +36,11 @@ const corsOptions = {
   credentials: true
 }
 //aplicanco el cors de forma global
+// si comento la siguiente línea sigue funcionando ¡¡¡ TENDRÍA QUE CAERSE !!! pero sigue funcionando la ruta http://localhost:3000/clientes
 app.use(cors()) // sin cors option funciona, aunque se podrá meter todo el mundo whitelist de adorno y corsOption también
 
 app.use(express.urlencoded({ extended: false })) //&&¿qué hago aquí?
-app.use(express.json())
+app.use(express.json()) //&&¿qué hago aquí?
 
 // routes api
 app.use('/api/carrito', carritoRoute)

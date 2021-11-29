@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const loginCliente = async (req, res) => {
   try {
     const { email, pass } = req.body
-    console.log(req)
+    console.log(req.body)
     console.log(email, pass)
     const cliente = await Cliente.findOne({ email })
     if (cliente) {
@@ -13,10 +13,10 @@ const loginCliente = async (req, res) => {
         const token = jwt.sign({ id: cliente._id }, 'HOLA', { expiresIn: '10h' })
         res.status(200).json({ message: 'Autenticado', token: token })
       } else {
-        res.status(404).json({ message: 'Datos incorrectos' })
+        res.status(403).json({ message: 'Datos incorrectos' })
       }
     } else {
-      res.status(404).json({ message: 'Datos incorrectos' })
+      res.status(403).json({ message: 'Datos incorrectos' })
     }
   } catch (error) {
     console.log(error)

@@ -1,3 +1,6 @@
+npm install cloudinary-core --save
+var cl = new cloudinary.Cloudinary({ cloud_name: 'javier-casta-eda', secure: true })
+
 let producto = {
   _id: '61892c3c45d4879aac313d72',
   id_producto: 1023,

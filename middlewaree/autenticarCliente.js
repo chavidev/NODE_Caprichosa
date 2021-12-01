@@ -25,7 +25,9 @@ let checkToken = async (req, res, next) => {
     next()
   } catch (err) {
     console.log(err)
+    console.log('Ups el token falló en: middlewaree-autenticarCliente.js')
     return res.status(401).json({
+      comentario: 'Ups el token falló en: middlewaree-autenticarCliente.js', //&&quiero ver el error cuando falla
       success: false,
       message: err.message || err._message
     })

@@ -6,6 +6,11 @@ const { checkToken } = require('../middlewaree/autenticarCliente.js')
 //zona de peligro limpieza de todos los clientes
 router.delete('/removed/user/:user/pass/:pass', cliente.removedAllCliente)
 
+//&&¿por qué se ejecuata el read?
+
+router //&&tengo qeu montarlo en una línea
+  .route('/myaccount')
+  .get(checkToken, cliente.readOne_id)
 //router.get('/:id', checkToken, cliente.readOne)  //sistema estandard del token
 
 //router.route(checkAdmin , '/admin')   // como admin no tengo limitaciones
@@ -20,7 +25,10 @@ router
   .put(cliente.update)
   .delete(cliente.deleteCliente)
 
-router.route('/').post(cliente.create).get(cliente.read)
+router
+  .route('/') //adjklaljsdkalsñ
+  .post(cliente.create)
+  .get(cliente.read)
 
 router
   .route('/:id')

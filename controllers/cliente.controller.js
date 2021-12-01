@@ -6,7 +6,6 @@ const ID_registro = require('../models/ID_registro')
 const read = async (req, res) => {
   try {
     const todosClientes = await Cliente.find()
-    console.log('read() Ejecutado / cliente.controller')
     res.status(200).json(todosClientes)
     console.log('read() Ejecutado / cliente.controller')
   } catch (error) {
@@ -22,7 +21,7 @@ const readOne = async (req, res) => {
     const params_id = req.params.id
     // ojo, lo busco por id_cliente no por el de mongo  ¡¡ RIESGO DE FALLO !!  pero es lo qeu me llegará de woocommerce
     const clienteEncontrado = await Cliente.findOne({ id_cliente: params_id }) //se puede unificar en una sola función =>"id_cliente"/"_id"
-    console.log('readOne() Ejecutado / cliente.controller')
+
     res.status(200).json(clienteEncontrado)
     console.log('readOne() Ejecutado / cliente.controller')
   } catch (err) {
@@ -37,8 +36,10 @@ const readOne_id = async (req, res) => {
   try {
     const id_cliente_autenticado = req.user.id
     const clienteEncontrado = await Cliente.findOne({ _id: id_cliente_autenticado })
-    console.log('readOne_id() Ejecutado / cliente.controller')
-    res.status(200).json(clienteEncontrado) //&&¿el segundo console no se ejecuta?
+    const parsed = JSON.parse(JSON.stringify(clienteEncontrado))
+    delete parsed['pass'] //forma interesante de eliminar la contraseña
+    //  console.log(parsed)
+    res.status(200).json(parsed) //&&¿el segundo console no se ejecuta?
     console.log('readOne_id() Ejecutado / cliente.controller')
   } catch (err) {
     console.log(err)
@@ -70,8 +71,8 @@ const create = async (req, res) => {
     id_registro.id_cliente += 1
     id_registro.save()
     const clienteCreado = await Cliente.create(cliente) // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
-    console.log('create() Ejecutado / cliente.controller')
     res.status(200).json({ message: 'success', cliente: clienteCreado, response }) // se le envia al front el producto creado y un menasaje de exitoso
+    console.log('create() Ejecutado / cliente.controller')
   } catch (err) {
     console.log(err)
     res.status(500).json({
@@ -90,8 +91,8 @@ const update = async (req, res) => {
     const params_id = req.params.id
     let cliente = await Cliente.findOne({ id_cliente: params_id })
     let response = await Cliente.findByIdAndUpdate(cliente._id, modificacion, { new: true })
-    console.log('update() Ejecutado / cliente.controller')
     res.status(200).json(response)
+    console.log('update() Ejecutado / cliente.controller')
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error al actualizar un cliente...' })
@@ -106,8 +107,8 @@ const deleteCliente = async (req, res) => {
     let cliente = await Cliente.findOne({ id_cliente: params_id })
     let response = await Cliente.findByIdAndDelete(cliente._id)
     //res.status(200).json(`has eliminado el cliente 24  ${response}`);   // funcionaría !sip y es mejor!
-    console.log('deleteCliente() Ejecutado / cliente.controller')
     res.status(200).json({ mensaje: 'se ha eliminado correctamente el id= ' + params_id, response })
+    console.log('deleteCliente() Ejecutado / cliente.controller')
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error en deleteCliente...' })

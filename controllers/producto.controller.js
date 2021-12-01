@@ -119,6 +119,24 @@ const filtro = async (req, res) => {
     res.status(500).json({ message: 'Error al LEER producto...' })
   }
 }
+/* 
+const filtro_chachi = async (req, res) => {
+  try {
+    const { categoria, talla, color } = req.query
+    console.log(req.query)
+    const todosProductos = await Producto.find((prenda)=>{
+      return(
+        prenda.categoria,
+        if (prenda.atributos.valores.valor==(color || talla )){ prenda} 
+         )
+      
+    })
+    res.status(200).json(todosProductos) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+} */
 
 /*    TENGO QEU CONSEGUIR QUE FUNCIONE CON DOS PARÁMETROS 
 const filtro__fallo = async (req, res) => {

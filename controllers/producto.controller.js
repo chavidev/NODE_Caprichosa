@@ -119,24 +119,58 @@ const filtro = async (req, res) => {
     res.status(500).json({ message: 'Error al LEER producto...' })
   }
 }
-/* 
-const filtro_chachi = async (req, res) => {
+
+const filtrar = (productos, atributo) => {
+  const variaciones_filtradas = []
+  for (let i = 0; i < productos.length; i++) {
+    for (let j = 0; j < productos[i].variaciones.length; j++) {
+      if (atributo) {
+        if (
+          productos[i].variaciones[j].atributo_1 === atributo ||
+          productos[i].variaciones[j].atributo_2 === atributo
+        ) {
+          variaciones_filtradas.push(productos[i].variaciones[j])
+        }
+      } else {
+        variaciones_filtradas.push(productos[i].variaciones[j])
+      }
+    }
+  }
+  return variaciones_filtradas
+}
+
+const filtrarVariacion = (variaciones, atributo) => {
+  if (atributo) {
+    const variaciones_filtradas = []
+    for (let i = 0; i < variaciones.length; i++) {
+      if (variaciones[i].atributo_1 === atributo || variaciones[i].atributo_2 === atributo) {
+        variaciones_filtradas.push(variaciones[i])
+      }
+    }
+    return variaciones_filtradas
+  } else {
+    return variaciones
+  }
+}
+
+const filtro_function = async (req, res) => {
   try {
-    const { categoria, talla, color } = req.query
+    const { categoria, talla, color, color_n } = req.query
     console.log(req.query)
-    const todosProductos = await Producto.find((prenda)=>{
-      return(
-        prenda.categoria,
-        if (prenda.atributos.valores.valor==(color || talla )){ prenda} 
-         )
-      
+    let todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'atributos.valores.valor': talla,
+      'atributos.valores.valor': { $ne: color_n } //ocultar
     })
-    res.status(200).json(todosProductos) //&&modificar por filtro productos
+    let variaciones = filtrar(todosProductos, talla)
+    variaciones = filtrarVariacion(variaciones, color)
+    res.status(200).json(variaciones) //&&modificar por filtro productos
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error al LEER producto...' })
   }
-} */
+}
 
 /*    TENGO QEU CONSEGUIR QUE FUNCIONE CON DOS PARÁMETROS 
 const filtro__fallo = async (req, res) => {
@@ -162,7 +196,8 @@ module.exports = {
   update,
   deleteProducto,
   removedAllProducto,
-  filtro
+  filtro,
+  filtro_function
 }
 
 //####  ojo no borrar, algún dia me va a hacer falta

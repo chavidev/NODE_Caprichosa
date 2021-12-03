@@ -88,6 +88,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     let modificacion = req.body
+    console.log(req.body)
     const params_id = req.params.id
     let cliente = await Cliente.findOne({ id_cliente: params_id })
     let response = await Cliente.findByIdAndUpdate(cliente._id, modificacion, { new: true })

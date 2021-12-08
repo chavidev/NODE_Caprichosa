@@ -1,5 +1,8 @@
 const Cliente = require('../models/Cliente')
 const ID_registro = require('../models/ID_registro')
+const { uploadToCloudinary } = require('../utils/uploadToCloudinary.js')
+
+//await cloudinary.uploader.destroy(personaje.cloudinary_id)
 
 // lectura de todos los producto
 // GET http://localhost:5001/api/cliente   body vacío
@@ -54,6 +57,12 @@ const create = async (req, res) => {
     const cliente = req.body
     let id_registro = await ID_registro.findOne()
 
+    const nombre_imagen = req.file.filename
+    const responseCloudinary = await uploadToCloudinary(nombre_imagen)
+    const { url, result } = responseCloudinary //&& a guardar en base de datos #####
+    console.log('url de la imagen', url)
+    console.log('response Cloudinary', responseCloudinary)
+
     //&& en producción, si no coge el id => que lance un error "Ups, no cogí la info de la base de datos"
     let response = ''
     if (!id_registro.id_cliente) {
@@ -70,6 +79,8 @@ const create = async (req, res) => {
     cliente.id_cliente = id_registro.id_cliente
     id_registro.id_cliente += 1
     id_registro.save()
+    cliente.img = url
+    cliente.asset_id = result.asset_id
     const clienteCreado = await Cliente.create(cliente) // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
     res.status(200).json({ message: 'success', cliente: clienteCreado, response }) // se le envia al front el producto creado y un menasaje de exitoso
     console.log('create() Ejecutado / cliente.controller')

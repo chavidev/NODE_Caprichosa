@@ -33,31 +33,6 @@ cloudinary.config({
   api_secret: process.env.API_SECRET_CLOUDINARY
 })
 
-async function uploadToCloudinary(nombre_imagen) {
-  // locaFilePath :
-  // path of image which was just uploaded to "uploads" folder
-  const folderClaudinary = 'home' //&&pendiente colocar nombre correcto en claudinary, ¿si no existe lo crea? CONFIRMAR
-  // filePathOnCloudinary :
-  // path of image we want when it is uploded to cloudinary
-  const rutaClaudinary = folderClaudinary + '/' + nombre_imagen
-  return cloudinary.uploader
-    .upload('uploads/' + nombre_imagen, { public_id: rutaClaudinary })
-    .then(result => {
-      // remueve la imagen de uploads cuando se suba a cloudinary de forma correcta
-      fs.unlinkSync('uploads/' + nombre_imagen) // && ELIMINA EL ARCHIVO DEL SERVIDOR  salga bién o mal
-      return {
-        message: 'Success',
-        url: result.url
-      }
-    })
-    .catch(error => {
-      console.log(error)
-      // Remove file from local uploads folder
-      fs.unlinkSync('uploads/' + nombre_imagen)
-      return { message: 'Fail' }
-    })
-}
-
 const uri = `mongodb+srv://admin:${process.env.PASSWORD_DB}@cluster0.mzbdm.mongodb.net/caprichosa?retryWrites=true&w=majority`
 mongoose
   .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -88,17 +63,8 @@ app.use(express.json()) //&&¿qué hago aquí?
 // routes api
 app.use('/api/carrito', carritoRoute)
 app.use('/api/producto', productosRoute)
-app.use('/api/cliente', clientesRoute)
+app.use('/api/cliente', upload.single('profile-file'), clientesRoute)
 app.use('/api/loginCliente', loginClienteRoute)
-app.post('/api/profile-upload-single', upload.single('profile-file'), async (req, res, next) => {
-  const nombre_imagen = req.file.filename
-  const result = await uploadToCloudinary(nombre_imagen)
-  const { url } = result //&& a guardar en base de datos #####
-
-  res.status(200).json({ message: 'success' })
-  //var response = buildSuccessMsg([result.url])
-  //return res.send(response)
-})
 
 app.listen(port, () => {
   console.log('server on port:', port)

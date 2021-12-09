@@ -27,7 +27,9 @@ const clienteSchema = new Schema({
   },
   pass: { type: String, required: false },
   img: { type: String, required: false },
-  asset_id: { type: String, required: false }
+  asset_id: { type: String, required: false },
+  public_id: { type: String, required: false },
+  response_cloudinary: { type: Object, required: false }
   //pendiente de introducir las medidas
 })
 

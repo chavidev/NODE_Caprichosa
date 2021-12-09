@@ -26,6 +26,10 @@ router
   .delete(cliente.deleteCliente)
 
 router
+  .route('/updateImage') //pendiente middleware
+  .put(cliente.updateImage)
+
+router
   .route('/') //adjklaljsdkalsñ
   .post(cliente.create)
   .get(cliente.read)

@@ -1,6 +1,7 @@
 const Cliente = require('../models/Cliente')
 const ID_registro = require('../models/ID_registro')
 const { uploadToCloudinary } = require('../utils/uploadToCloudinary.js')
+const cloudinary = require('cloudinary').v2
 
 //await cloudinary.uploader.destroy(personaje.cloudinary_id)
 
@@ -39,7 +40,7 @@ const readOne_id = async (req, res) => {
   try {
     const id_cliente_autenticado = req.user.id
     const clienteEncontrado = await Cliente.findOne({ _id: id_cliente_autenticado })
-    const parsed = JSON.parse(JSON.stringify(clienteEncontrado))
+    const parsed = JSON.parse(JSON.stringify(clienteEncontrado)) //&& usar cliente encontrado directamente, no hace falta parsear un Stringify
     delete parsed['pass'] //forma interesante de eliminar la contraseña
     //  console.log(parsed)
     res.status(200).json(parsed) //&&¿el segundo console no se ejecuta?
@@ -57,12 +58,6 @@ const create = async (req, res) => {
     const cliente = req.body
     let id_registro = await ID_registro.findOne()
 
-    const nombre_imagen = req.file.filename
-    const responseCloudinary = await uploadToCloudinary(nombre_imagen)
-    const { url, result } = responseCloudinary //&& a guardar en base de datos #####
-    console.log('url de la imagen', url)
-    console.log('response Cloudinary', responseCloudinary)
-
     //&& en producción, si no coge el id => que lance un error "Ups, no cogí la info de la base de datos"
     let response = ''
     if (!id_registro.id_cliente) {
@@ -79,9 +74,28 @@ const create = async (req, res) => {
     cliente.id_cliente = id_registro.id_cliente
     id_registro.id_cliente += 1
     id_registro.save()
-    cliente.img = url
-    cliente.asset_id = result.asset_id
-    const clienteCreado = await Cliente.create(cliente) // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
+    let clienteCreado = await Cliente.create(cliente)
+
+    if (req.file) {
+      const nombre_imagen = req.file.filename
+      const responseCloudinary = await uploadToCloudinary(
+        nombre_imagen,
+        'clientes',
+        clienteCreado._id
+      )
+      const { url, result } = responseCloudinary //&& a guardar en base de datos #####
+      console.log('url de la imagen', url)
+      console.log('response Cloudinary', responseCloudinary)
+
+      clienteCreado.img = url
+      clienteCreado.asset_id = result.asset_id
+      clienteCreado.public_id = result.public_id
+      clienteCreado.response_cloudinary = responseCloudinary
+
+      clienteCreado = await clienteCreado.save()
+    }
+
+    // &&¿create es de mongoose? se crea el producto, mediante el metodo Producto.create()
     res.status(200).json({ message: 'success', cliente: clienteCreado, response }) // se le envia al front el producto creado y un menasaje de exitoso
     console.log('create() Ejecutado / cliente.controller')
   } catch (err) {
@@ -101,13 +115,51 @@ const update = async (req, res) => {
     let modificacion = req.body
     console.log(req.body)
     const params_id = req.params.id
-    let cliente = await Cliente.findOne({ id_cliente: params_id })
-    let response = await Cliente.findByIdAndUpdate(cliente._id, modificacion, { new: true })
+    //let cliente = await Cliente.findOne({ id_cliente: params_id })
+    //let response = await Cliente.findByIdAndUpdate(cliente._id, modificacion, { new: true })
+    //colocandolas dos líneas en una sola   { id_cliente: params_id } lo puedo modificar por lo qeu quiera
+    const response = await Cliente.findOneAndUpdate({ id_cliente: params_id }, modificacion, {
+      new: true
+    })
     res.status(200).json(response)
     console.log('update() Ejecutado / cliente.controller')
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error al actualizar un cliente...' })
+  }
+}
+
+const updateImage = async (req, res) => {
+  try {
+    let modificacion = req.body
+    if (req.file) {
+      const nombre_imagen = req.file.filename
+      const responseCloudinary = await uploadToCloudinary(
+        nombre_imagen,
+        'clientes',
+        modificacion._id
+      )
+      const { url, result } = responseCloudinary //&& a guardar en base de datos ####
+      let cliente = await Cliente.findOne({ _id: modificacion._id })
+      cliente.asset_id = result.asset_id
+      cliente.response_cloudinary = responseCloudinary
+      cliente.public_id = result.public_id
+      cliente.img = url
+      cliente = await cliente.save()
+      res.status(200).json(cliente)
+    } else {
+      let cliente = await Cliente.findOne({ _id: modificacion._id })
+      const responseCloudinary = await cloudinary.uploader.destroy(modificacion.public_id)
+      cliente.asset_id = ''
+      cliente.response_cloudinary = responseCloudinary
+      cliente.img = ''
+      cliente.public_id = ''
+      cliente = await cliente.save()
+      res.status(200).json(cliente)
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error updateImage...' })
   }
 }
 
@@ -157,5 +209,6 @@ module.exports = {
   readOne_id,
   update,
   deleteCliente,
-  removedAllCliente
+  removedAllCliente,
+  updateImage
 }

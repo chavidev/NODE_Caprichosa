@@ -2,13 +2,13 @@ const cloudinary = require('cloudinary').v2
 const fs = require('fs')
 var path = require('path')
 
-const uploadToCloudinary = async nombre_imagen => {
+const uploadToCloudinary = async (nombre_imagen, carpeta, id_cliente) => {
   // locaFilePath :
   // path of image which was just uploaded to "uploads" folder
-  const folderClaudinary = 'home' //&&pendiente colocar nombre correcto en claudinary, ¿si no existe lo crea? CONFIRMAR
+  const folderClaudinary = carpeta //&&pendiente colocar nombre correcto en claudinary, ¿si no existe lo crea? CONFIRMAR
   // filePathOnCloudinary :
   // path of image we want when it is uploded to cloudinary
-  const rutaClaudinary = folderClaudinary + '/' + nombre_imagen
+  const rutaClaudinary = folderClaudinary + '/' + id_cliente
   return cloudinary.uploader
     .upload(path.resolve('./') + '/uploads/' + nombre_imagen, { public_id: rutaClaudinary })
     .then(result => {

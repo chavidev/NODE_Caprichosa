@@ -1,0 +1,65 @@
+const ShoppingCart = require('../models/ShoppingCart')
+
+const read = async (req, res) => {
+  try {
+    const id_cliente_autenticado = req.user.id
+    const shopping = await ShoppingCart.findOne({ id_cliente: id_cliente_autenticado })
+    res.status(200).json({ message: 'success', shoppingCart: shopping })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error leyendo el carrito' })
+  }
+}
+
+const add = async (req, res) => {
+  try {
+    const id_cliente_autenticado = req.user.id
+    const { id_producto, id_variacion, cantidad } = req.body
+    let shopping = await ShoppingCart.findOne({ id_cliente: id_cliente_autenticado })
+    if (!shopping) {
+      shopping = await ShoppingCart.create({ id_cliente: id_cliente_autenticado })
+    }
+    shopping.variaciones.push({ id_producto, id_variacion, cantidad })
+    shopping = await shopping.save()
+    res.status(200).json({ message: 'success', shoppingCart: shopping })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: 'error al agregar a carrito' })
+  }
+}
+
+// delete  http://localhost:5001/api/cliente/1022
+const deleteVariacion = async (req, res) => {
+  try {
+    const id_cliente_autenticado = req.user.id
+    let shopping = await ShoppingCart.findOne({ id_cliente: id_cliente_autenticado })
+    if (shopping) {
+      const { id_variacion } = req.body
+      shopping = await shopping.variaciones.pull({ _id: id_variacion })
+      res.status(404).json({ mensaje: 'Variacion eliminada correctamente', shoppingCart: shopping })
+    } else {
+      res.status(404).json({ mensaje: 'Carrito no encontrado...' })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al eliminar una variacion de un carrito...' })
+  }
+}
+
+const deleteShopping = async (req, res) => {
+  try {
+    const id_cliente_autenticado = req.user.id
+    let shopping = await ShoppingCart.deleteOne({ id_cliente: id_cliente_autenticado })
+    res.status(200).json({ mensaje: 'Carrito elimanado correctamente', shoppingCart: shopping })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al eliminar un carrito...' })
+  }
+}
+
+module.exports = {
+  add,
+  read,
+  deleteVariacion,
+  deleteShopping
+}

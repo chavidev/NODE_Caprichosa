@@ -8,6 +8,7 @@ const productosRoute = require('./routes/routeProductos.js')
 const carritoRoute = require('./routes/routeCarrito.js')
 const clientesRoute = require('./routes/routeClientes.js')
 const loginClienteRoute = require('./routes/routeLoginCliente.js')
+const shoppingCartRoute = require('./routes/routeShoppingCart.js')
 //&&clientesroute
 
 const dotenv = require('dotenv') // utilizo las variables de ambiente
@@ -65,6 +66,7 @@ app.use('/api/carrito', carritoRoute)
 app.use('/api/producto', productosRoute)
 app.use('/api/cliente', upload.single('profile-file'), clientesRoute)
 app.use('/api/loginCliente', loginClienteRoute)
+app.use('/api/shoppingCart', shoppingCartRoute)
 
 app.listen(port, () => {
   console.log('server on port:', port)

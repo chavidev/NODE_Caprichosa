@@ -34,9 +34,9 @@ const deleteVariacion = async (req, res) => {
     const id_cliente_autenticado = req.user.id
     let shopping = await ShoppingCart.findOne({ id_cliente: id_cliente_autenticado })
     if (shopping) {
-      const { id_variacion } = req.body
-      shopping = await shopping.variaciones.pull({ _id: id_variacion })
-      res.status(404).json({ mensaje: 'Variacion eliminada correctamente', shoppingCart: shopping })
+      const { _id } = req.body
+      shopping = await shopping.variaciones.pull({ _id: _id })
+      res.status(200).json({ mensaje: 'Variacion eliminada correctamente', shoppingCart: shopping })
     } else {
       res.status(404).json({ mensaje: 'Carrito no encontrado...' })
     }

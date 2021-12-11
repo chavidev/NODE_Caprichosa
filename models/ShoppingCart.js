@@ -13,6 +13,7 @@ const variacionesShoppingSchema = new Schema(
 const ShoppingCartSchema = new Schema(
   {
     id_cliente: { type: Schema.Types.ObjectId, ref: 'cliente' },
+    state: { type: String, enum: ['OPEN', 'CLOSE'], required: true, default: 'OPEN' },
     variaciones: [variacionesShoppingSchema]
   },
   { timestamps: true }

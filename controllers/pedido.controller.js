@@ -1,5 +1,6 @@
 const Pedido = require('../models/Pedido')
 const ID_registro = require('../models/ID_registro')
+const ShoppingCart = require('../models/ShoppingCart')
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //ojo el carrito hay que cerrarlo
@@ -8,12 +9,19 @@ const ID_registro = require('../models/ID_registro')
 const createPedido = async (req, res) => {
   try {
     const pedido = req.body // objeto que viene desde el front
+
     let id_registro = await ID_registro.findOne()
+    console.log('+++++++++++++pedidod', id_registro)
     id_registro.id_pedido += 1
-    console.log(id_registro.id_pedido)
     pedido.id_pedido = id_registro.id_pedido
     await id_registro.save()
+    pedido.id_cliente = req.user.id
     const pedidoCreado = await Pedido.create(pedido)
+
+    const shopping = await ShoppingCart.findOne({ _id: pedido.id_carrito })
+    shopping.state = 'CLOSE'
+    await shopping.save()
+
     res.status(200).json({ message: 'success', pedido: pedidoCreado }) // se le envia al front el carrito creado y un menasaje de exitoso
   } catch (error) {
     console.log(error)

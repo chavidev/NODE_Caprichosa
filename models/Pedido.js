@@ -7,21 +7,21 @@ const pedidoSchema = new Schema(
     id_carrito: { type: Schema.Types.ObjectId, ref: 'carrito' }, //&& CONSIGUE QUE no se puedA actualizar
     id_cliente: { type: Schema.Types.ObjectId, ref: 'cliente' }, // id de mongo
     state: {
-      type: Enum,
+      type: String,
       enum: ['RECIBIDO', 'PREPARADO', 'ENVIADO', 'ENTREGADO'],
-      required: true
+      required: false
     },
     formaPago: {
-      type: Enum,
+      type: String,
       enum: ['EFECTIVO', 'TARGETA', 'CREDITO', 'CONTRAREEMBOLSO'],
-      required: true
+      required: false
     },
     lugarEntrega: { type: String }, //hay que poner mas datos aquí
-    segumiento: [string]
+    seguimiento: [String]
   },
   { timestamps: true }
 )
 
-const Pedido = mongoose.model('carrito', pedidoSchema)
+const Pedido = mongoose.model('pedido', pedidoSchema)
 
 module.exports = Pedido

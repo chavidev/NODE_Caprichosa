@@ -28,7 +28,7 @@ const carritoSchema = new Schema(
     id_cliente: { type: Schema.Types.ObjectId, ref: 'cliente' }, // id de mongo
     state: {
       type: String,
-      enum: ['OPEN', 'CLOSED'],
+      enum: ['OPENED', 'CLOSED'],
       required: true
     },
     variaciones: {

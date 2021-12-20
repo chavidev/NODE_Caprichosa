@@ -1,108 +1,204 @@
-const  Producto = require('../models/Producto') // modelo producto
+const Producto = require('../models/Producto') //import Producto from '../models/Producto'
 const ID_registro = require('../models/ID_registro')
-
-//creando un nuevo producto
-const create = async (req, res) => {
-    try {
-        const producto = req.body; // objeto que viene desde el front 
-        let id_registro = await ID_registro.findOne() 
-        if(!id_registro)  id_registro = await ID_registro.create({ id_variacion: 1000});
-        producto.id_producto = id_registro.id_variacion
-        id_registro.id_variacion += 1
-        id_registro.save()
-        const productoCreado = await Producto.create(producto); // se crea el producto, mediante el metodo Producto.create()
-        res.status(200).json({ message: 'success', producto:productoCreado  }); // se le envia al front el producto creado y un menasaje de exitoso
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al crear producto...' }); 
-    }
-}
+const { crear_variaciones } = require('../utils/utils')
 
 // lectura de todos los producto
+// GET http://localhost:5001/api/producto   body vacío
 const read = async (req, res) => {
-    try {
-        const todosProductos = await Producto.find()
-        res.status(200).json(todosProductos)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al LEER producto...' });
-    }
+  try {
+    const todosProductos = await Producto.find()
+    res.status(200).json(todosProductos)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
 }
-
-// a partir de aquí paso el :id desde la url
 
 // leer un producto
-//http://localhost:5001/api/producto/1022 (metodo: GET) body vacío
+//GET http://localhost:5001/api/producto/1022  body vacío
 const readOne = async (req, res) => {
-    try {
-        const params_id = req.params.id
-        const productoEncontrado = await Producto.findOne({"id_producto": params_id}) //¿que ocurre si no le paso función?
-        res.status(200).json(productoEncontrado)
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: 'Error en readOne producto...' }); //&& quiero poner el error que me viene, err.message
-    }
+  try {
+    const params_id = req.params.id
+
+    const productoEncontrado = await Producto.findOne({ id_producto: params_id }) //¿que ocurre si no le paso función?
+    // const productoEncontrado = await Producto.find({"price":{$and:[{$gt:500},{$lt:1000}]}})
+    res.status(200).json(productoEncontrado)
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: 'Error en readOne producto...', error: err }) //&& quiero poner el error que me viene, err.message
+  }
 }
 
-// put  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} 
+//creando un nuevo producto
+// POST http://localhost:5001/api/producto   body con todo
+const create = async (req, res) => {
+  try {
+    const producto = req.body // objeto que viene desde el front
+    let id_registro = await ID_registro.findOne()
+    if (!id_registro) id_registro = await ID_registro.create({ id_variacion: 1000 })
+    id_registro.id_variacion += 1
+    producto.id_producto = id_registro.id_variacion
+    await id_registro.save() // solución para evitar qeu el primer hijo tenga el mismo id qpe el padre
+
+    //producto.id_variacion = crear_variaciones(producto.atributos[0],producto.atributos[1])
+    //producto.variaciones = "12345"
+    //console.log(crear_variaciones)
+    producto.variaciones = await crear_variaciones(producto.atributos, id_registro.id_variacion)
+    const productoCreado = await Producto.create(producto) // se crea el producto, mediante el metodo Producto.create()
+    res.status(200).json({ message: 'success', producto: productoCreado }) // se le envia al front el producto creado y un menasaje de exitoso
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al crear producto...', producto })
+  }
+}
+
+// update
+// PUT  http://localhost:5001/api/producto/1022  Ej body: {{"nombre": "nombre 10 actualizado","P_V_P": 3.5}} Sólo lo qeu hay qeu actualizar
 const update = async (req, res) => {
-    try { 
-        let modificacion = req.body
-        const params_id = req.params.id
-        let producto = await Producto.findOne({"id_producto":params_id})
-        let response =  await Producto.findByIdAndUpdate(producto._id,modificacion, {new: true})
-        res.status(200).json(response); 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al crear producto...' }); 
-    }
+  try {
+    let modificacion = req.body
+    const params_id = req.params.id
+    let producto = await Producto.findOne({ id_producto: params_id })
+    let response = await Producto.findByIdAndUpdate(producto._id, modificacion, { new: true })
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al actualizar un producto...', modificacion })
+  }
 }
 
 // delete  http://localhost:5001/api/producto/1022
 const deleteProducto = async (req, res) => {
-    try { 
-        //let eliminar = req.body
-        const params_id = req.params.id //en el caso de recibir el id/EAN por url
-        //let producto = await Producto.findOne({"id_producto":eliminar.id_producto})  //en el caso de pasarselo por el body
-        let producto = await Producto.findOne({"id_producto":params_id})
-        let response =  await Producto.findByIdAndDelete(producto._id)         
-        res.status(200).json(response); 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al eliminar el  producto...' }); 
-    }
+  try {
+    const params_id = req.params.id //en el caso de recibir el id/EAN por url
+    //let producto = await Producto.findOne({"id_producto":eliminar.id_producto})  //en el caso de pasarselo por el body
+    let producto = await Producto.findOne({ id_producto: params_id })
+    let response = await Producto.findByIdAndDelete(producto._id)
+    res.status(200).json({
+      msg: 'producto eliminado',
+      response
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al eliminar el  producto...' })
+  }
 }
 
-// peligro!!!!  limpieza de toda la base de datos
-// Producto.remove()  http://localhost:5001/api/producto/removed/user/:user/pass/:pass 
-//http://localhost:5001/api/producto/removed/user/admin_1/pass/pass_1
+// Producto.remove()   ###  peligro!!!!  limpieza de toda la base de datos
+// DELETE  http://localhost:5001/api/producto/removed/user/admin_1/pass/pass_1
 const removedAllProducto = async (req, res) => {
-    try {
-        const userName = req.params.user  
-        const password = req.params.pass
-        if(userName === "admin_1" && password === "pass_1"){
-            let removedAll = await Producto.remove()                                    //confirmar que el await es necesario y analizar la respuesta
-            res.status(200).json({removedAll , msg:"acabas de limpiar la Base de datos"});
-        } else {
-            res.status(200).json("Ups, algo falló");
-        }
-    } catch (err){
-        res.status(500).json({ message: 'Error  removedAllProducto()  Producto.remove() al eliminar todos los producto...' });
+  try {
+    const userName = req.params.user
+    const password = req.params.pass
+    if (userName === 'admin_1' && password === 'pass_1') {
+      let removedAll = await Producto.remove()
+      res.status(200).json({ removedAll, msg: 'acabas de ELIMINAR TODOS LOS PRODUCTOS' })
+    } else {
+      res.status(200).json('Ups, algo falló')
     }
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error  removedAllProducto()  Producto.remove() al eliminar todos los producto...'
+    })
+  }
 }
 
-//limpieza  clean
-//Producto.remove()
+//&& or and y not   (un mismo atributo color and talla)
+const filtro = async (req, res) => {
+  try {
+    const { categoria, talla, color } = req.query
+    console.log(req.query)
+    const todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'variaciones.atributo_2': talla
+    })
+    res.status(200).json(todosProductos) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+}
+
+const filtrar = (productos, atributo) => {
+  const variaciones_filtradas = []
+  for (let i = 0; i < productos.length; i++) {
+    for (let j = 0; j < productos[i].variaciones.length; j++) {
+      if (atributo) {
+        if (
+          productos[i].variaciones[j].atributo_1 === atributo ||
+          productos[i].variaciones[j].atributo_2 === atributo
+        ) {
+          variaciones_filtradas.push(productos[i].variaciones[j])
+        }
+      } else {
+        variaciones_filtradas.push(productos[i].variaciones[j])
+      }
+    }
+  }
+  return variaciones_filtradas
+}
+
+const filtrarVariacion = (variaciones, atributo) => {
+  if (atributo) {
+    const variaciones_filtradas = []
+    for (let i = 0; i < variaciones.length; i++) {
+      if (variaciones[i].atributo_1 === atributo || variaciones[i].atributo_2 === atributo) {
+        variaciones_filtradas.push(variaciones[i])
+      }
+    }
+    return variaciones_filtradas
+  } else {
+    return variaciones
+  }
+}
+
+const filtro_function = async (req, res) => {
+  try {
+    const { categoria, talla, color, color_n } = req.query
+    console.log(req.query)
+    let todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'atributos.valores.valor': talla,
+      'atributos.valores.valor': { $ne: color_n } //ocultar
+    })
+    let variaciones = filtrar(todosProductos, talla)
+    variaciones = filtrarVariacion(variaciones, color)
+    res.status(200).json(variaciones) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+}
+
+/*    TENGO QEU CONSEGUIR QUE FUNCIONE CON DOS PARÁMETROS 
+const filtro__fallo = async (req, res) => {
+  try {
+    const { categoria, talla, color } = req.query
+    console.log(req.query)
+    const todosProductos = await Producto.find({
+      categoria,
+      'atributos.valores.valor': color,
+      'atributos.valores.valor': talla //genera error aquí
+    })
+    res.status(200).json(todosProductos) //&&modificar por filtro productos
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error al LEER producto...' })
+  }
+} */
 
 module.exports = {
-    create,
-    read,
-    readOne,
-    update,
-    deleteProducto,
-    removedAllProducto,
-};
-
+  create,
+  read,
+  readOne,
+  update,
+  deleteProducto,
+  removedAllProducto,
+  filtro,
+  filtro_function
+}
 
 //####  ojo no borrar, algún dia me va a hacer falta
 // con ésta función se lo paso todo por el body

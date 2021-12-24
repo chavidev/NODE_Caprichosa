@@ -8,10 +8,29 @@ const read = async (req, res) => {
       id_cliente: id_cliente_autenticado,
       state: 'OPENED'
     })
-    res.status(200).json({ function: 'read', message: 'success', shoppingCart: shopping })
+
+    const response = await Promise.all(
+      shopping.variaciones.map(async (variacion, i) => {
+        //let producto = await Producto.findOne({ _id: variacion.id_producto })
+        const producto = await Producto.findOne({
+          'variaciones.id_variacion': variacion.id_variacion
+        })
+        const variacion_elegida = producto.variaciones.find(
+          p => p.id_variacion === variacion.id_variacion
+        )
+        return { producto, variacion, variacion_elegida }
+      })
+    )
+
+    res.status(200).json({
+      function: 'read',
+      message: 'success',
+      shoppingCart: shopping,
+      variacionProducto: response
+    })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: 'Error leyendo el carrito' })
+    res.status(500).json({ message: 'Error leyendo el carrito', message: 'false' })
   }
 }
 
@@ -29,7 +48,11 @@ const add = async (req, res) => {
     if (!shopping) {
       shopping = await ShoppingCart.create({ id_cliente: id_cliente_autenticado })
     }
-    shopping.variaciones.push({ id_producto: producto._id, id_variacion, cantidad })
+    shopping.variaciones.push({
+      id_producto: producto._id,
+      id_variacion,
+      cantidad
+    })
     shopping = await shopping.save()
     res.status(200).json({ message: 'success', shoppingCart: shopping })
   } catch (err) {
